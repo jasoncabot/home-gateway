@@ -20,3 +20,8 @@ Only one UDP port is exposed. WireGuard doesn't answer unauthenticated packets, 
 - Pi-hole sees tunnel queries from the TrueNAS host's LAN address; allow it in Pi-hole's interface settings if needed.
 - If you lose the phone, delete the peer from the wireguard config volume and restart.
 - Behind CGNAT, port forwarding won't work.
+
+## IPv6
+The peer routes `::/0` into the tunnel so IPv6 can't bypass it and leak a non-UK address. The server
+has no IPv6 route, so those packets are dropped and apps fall back to IPv4 through the tunnel.
+Changing `ALLOWEDIPS` regenerates the peer config: delete and re-add the tunnel on the phone.

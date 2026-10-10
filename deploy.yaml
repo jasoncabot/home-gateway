@@ -24,7 +24,9 @@ services:
       PEERS: phone
       PEERDNS: ${PIHOLE_IP}
       INTERNAL_SUBNET: 10.13.13.0
-      ALLOWEDIPS: 0.0.0.0/0
+      # ::/0 captures IPv6 so it can't bypass the tunnel; the server has no v6
+      # route, so apps fall back to IPv4 through the tunnel.
+      ALLOWEDIPS: '0.0.0.0/0, ::/0'
     cap_add:
       - NET_ADMIN
     sysctls:
