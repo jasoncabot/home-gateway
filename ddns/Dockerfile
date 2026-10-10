@@ -4,5 +4,5 @@ RUN apk add --no-cache curl jq \
 COPY update.sh /usr/local/bin/update.sh
 USER ddns
 # CF_API_TOKEN, CF_ZONE_ID and CF_RECORD_NAME must be supplied at runtime.
-ENV INTERVAL=300 TTL=60
+ENV INTERVAL=3600 TTL=60
 ENTRYPOINT ["/usr/local/bin/update.sh"]
