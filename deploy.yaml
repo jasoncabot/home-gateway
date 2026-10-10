@@ -1,0 +1,39 @@
+# TrueNAS custom app. Supply the ${VARS} from the stack's own environment;
+# nothing environment-specific lives in git.
+services:
+  ddns:
+    image: ghcr.io/jasoncabot/home-gateway:main
+    environment:
+      CF_API_TOKEN: ${CF_API_TOKEN}
+      CF_ZONE_ID: ${CF_ZONE_ID}
+      CF_RECORD_NAME: ${VPN_HOSTNAME}
+    read_only: true
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    user: '3004:3004'
+
+  wireguard:
+    image: lscr.io/linuxserver/wireguard:latest
+    environment:
+      PUID: '1000'
+      PGID: '1000'
+      TZ: Europe/London
+      SERVERURL: ${VPN_HOSTNAME}
+      SERVERPORT: '51820'
+      PEERS: phone
+      PEERDNS: ${PIHOLE_IP}
+      INTERNAL_SUBNET: 10.13.13.0
+      ALLOWEDIPS: 0.0.0.0/0
+    cap_add:
+      - NET_ADMIN
+    sysctls:
+      net.ipv4.conf.all.src_valid_mark: '1'
+    ports:
+      - 51820:51820/udp
+    restart: unless-stopped
+    volumes:
+      - wireguard-config:/config
+
+volumes:
+  wireguard-config: {}
